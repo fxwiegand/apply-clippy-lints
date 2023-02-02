@@ -1,4 +1,4 @@
-# plumber-ferris
+# apply-clippy-lints
 A GitHub action that applies lints from clippy and creates a new PR automatically to keep your code clean and up-to-date.
 
 ### Usage
