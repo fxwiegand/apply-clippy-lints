@@ -1,5 +1,5 @@
-name: 'Ferris the plumber'
-description: 'Let ferris the plumber automatically apply the latest clippy lints to your project'
+name: 'apply-clippy-lints'
+description: 'Let apply-clippy-lints automatically apply the latest clippy lints to your project'
 inputs:
   toolchain:
     description: 'The rust toolchain to use'
