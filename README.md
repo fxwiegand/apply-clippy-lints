@@ -3,7 +3,7 @@ A GitHub action that applies lints from clippy and creates a new PR automaticall
 
 ### Usage
 
-```
+```yaml
 autofix:
     runs-on: ubuntu-latest
     steps:
