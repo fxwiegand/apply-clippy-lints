@@ -14,9 +14,11 @@ runs:
     - uses: actions-rs/cargo@v1
       with:
         command: clippy
+        toolchain: ${{ inputs.toolchain }}
         args: --fix
     - uses: actions-rs/cargo@v1
       with:
+        toolchain: ${{ inputs.toolchain }}
         command: fmt
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v4
