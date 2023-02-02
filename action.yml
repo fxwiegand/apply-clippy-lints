@@ -22,7 +22,6 @@ runs:
       uses: peter-evans/create-pull-request@v4
       with:
         title: "refactor: Apply latest clippy lints"
-        committer: 'Ferris the plumber'
         delete-branch: true
         branch: clippy-lints
         body: |
