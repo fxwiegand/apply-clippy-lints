@@ -10,7 +10,7 @@ autofix:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Auto apply clippy lints
-        uses: fxwiegand/plumber-ferris@v1
+        uses: fxwiegand/apply-clippy-lints@v1
         with:
           toolchain: stable
 ```
