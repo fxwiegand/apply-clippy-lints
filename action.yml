@@ -1,0 +1,29 @@
+name: 'Ferris the plumber'
+description: 'Let ferris the plumber automatically apply the latest clippy lints to your project'
+inputs:
+  toolchain:
+    description: 'The rust toolchain to use'
+    required: true
+    default: 'stable'
+runs:
+  using: "composite"
+  steps:
+    - uses: actions-rs/toolchain@v1
+      with:
+        toolchain: ${{ inputs.toolchain }}
+    - uses: actions-rs/cargo@v1
+      with:
+        command: clippy
+        args: --fix
+    - uses: actions-rs/cargo@v1
+      with:
+        command: fmt
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v4
+      with:
+        title: "refactor: Apply latest clippy lints"
+        committer: 'Ferris the plumber'
+        delete-branch: true
+        branch: clippy-lints
+        body: |
+          I found some new fixes for your repository. This PR applies them to your project.
