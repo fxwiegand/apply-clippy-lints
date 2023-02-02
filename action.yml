@@ -5,6 +5,10 @@ inputs:
     description: 'The rust toolchain to use'
     required: true
     default: 'stable'
+  commit-message:
+    description: 'The commit message of the automatically generated PR'
+    required: true
+    default: 'refactor: Apply latest clippy lints'
 runs:
   using: "composite"
   steps:
@@ -23,7 +27,7 @@ runs:
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v4
       with:
-        title: "refactor: Apply latest clippy lints"
+        title: ${{ inputs.commit-message }}
         delete-branch: true
         branch: clippy-lints
         body: |

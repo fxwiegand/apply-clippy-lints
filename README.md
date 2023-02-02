@@ -17,6 +17,7 @@ autofix:
 
 ### Options
 
-| Option    | explanation                                                                                                      | default |
-|-----------|------------------------------------------------------------------------------------------------------------------|---------|
-| toolchain | The rust toolchain to use                                                                                        | stable  |
+| Option         | explanation                            | default                             |
+|----------------|----------------------------------------|-------------------------------------|
+| toolchain      | The rust toolchain to use              | stable                              |
+| commit-message | The commit message of the generated PR | refactor: Apply latest clippy lints |
