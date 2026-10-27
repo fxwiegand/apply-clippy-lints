@@ -13,7 +13,7 @@ autofix:
       - name: Checkout repository
         uses: actions/checkout@v7
       - name: Auto apply clippy lints
-        uses: fxwiegand/apply-clippy-lints@v1.1.0
+        uses: fxwiegand/apply-clippy-lints@v1.1.0 # x-release-please-version
         with:
           toolchain: stable
 ```
