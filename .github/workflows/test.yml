@@ -54,9 +54,14 @@ jobs:
           gh pr view "$PR" --repo "$GITHUB_REPOSITORY" --json title,commits \
             --jq '.title, .commits[].messageHeadline'
           gh pr diff "$PR" --repo "$GITHUB_REPOSITORY" | grep 'is_empty()'
-      - name: Close test pull request
-        if: always() && steps.apply.outputs.pull-request-number != ''
+      - name: Clean up test pull request and branch
+        if: always()
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ steps.apply.outputs.pull-request-number }}
-        run: gh pr close "$PR" --repo "$GITHUB_REPOSITORY" --delete-branch --comment "Closed automatically by the test workflow."
+        run: |
+          if [ -n "$PR" ]; then
+            gh pr close "$PR" --repo "$GITHUB_REPOSITORY" --delete-branch --comment "Closed automatically by the test workflow."
+          elif git ls-remote --exit-code --heads origin clippy-lints > /dev/null; then
+            git push origin --delete clippy-lints
+          fi
