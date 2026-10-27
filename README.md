@@ -6,18 +6,31 @@ A GitHub action that applies lints from clippy and creates a new PR automaticall
 ```yaml
 autofix:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
       - name: Auto apply clippy lints
-        uses: fxwiegand/apply-clippy-lints@v1
+        uses: fxwiegand/apply-clippy-lints@v1.1.0
         with:
           toolchain: stable
 ```
 
+The PR is created with the default `GITHUB_TOKEN`, so "Allow GitHub Actions to create and approve pull requests" has to be enabled in the repository settings under Actions > General.
+
 ### Options
 
-| Option         | explanation                            | default                             |
-|----------------|----------------------------------------|-------------------------------------|
-| toolchain      | The rust toolchain to use              | stable                              |
-| commit-message | The commit message of the generated PR | refactor: Apply latest clippy lints |
+| Option         | explanation                                      | default                             |
+|----------------|--------------------------------------------------|-------------------------------------|
+| toolchain      | The rust toolchain to use                        | stable                              |
+| commit-message | The commit message and title of the generated PR | refactor: Apply latest clippy lints |
+
+### Outputs
+
+| Output                 | explanation                                                          |
+|------------------------|----------------------------------------------------------------------|
+| pull-request-number    | The number of the created or updated PR                              |
+| pull-request-url       | The URL of the created or updated PR                                 |
+| pull-request-operation | The operation performed on the PR (created, updated, closed or none) |
