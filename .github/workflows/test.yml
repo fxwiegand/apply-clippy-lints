@@ -36,7 +36,11 @@ jobs:
           fn main() {
               let v = vec![1, 2, 3];
               if v.len() == 0 { println!("empty"); }
+              let w = vec![4];
+              let b = w.len() > 1;
+              if b == true { println!("{}", count(&Vec::new())); }
           }
+          fn count(x: &Vec<i32>) -> usize { return x.len(); }
           EOF
       - name: Apply clippy lints
         id: apply
@@ -54,6 +58,15 @@ jobs:
           gh pr view "$PR" --repo "$GITHUB_REPOSITORY" --json title,commits \
             --jq '.title, .commits[].messageHeadline'
           gh pr diff "$PR" --repo "$GITHUB_REPOSITORY" | grep 'is_empty()'
+          body=$(gh pr view "$PR" --repo "$GITHUB_REPOSITORY" --json body --jq .body)
+          echo "$body"
+          grep -F 'applied 5 fixes in 1 file' <<< "$body"
+          grep -F '[`clippy::useless_vec`](' <<< "$body" | grep -F '| 2 |'
+          for lint in len_zero bool_comparison needless_return; do
+            grep -F "[\`clippy::$lint\`](" <<< "$body" | grep -F '| 1 |'
+          done
+          grep -F 'remaining warning' <<< "$body"
+          grep -F '`clippy::ptr_arg`' <<< "$body" | grep -F 'src/main.rs:'
       - name: Clean up test pull request and branch
         if: always()
         env:
