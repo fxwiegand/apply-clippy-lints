@@ -6,28 +6,45 @@ inputs:
     required: true
     default: 'stable'
   commit-message:
-    description: 'The commit message of the automatically generated PR'
+    description: 'The commit message and title of the automatically generated PR'
     required: true
     default: 'refactor: Apply latest clippy lints'
+outputs:
+  pull-request-number:
+    description: 'The number of the created or updated pull request'
+    value: ${{ steps.cpr.outputs.pull-request-number }}
+  pull-request-url:
+    description: 'The URL of the created or updated pull request'
+    value: ${{ steps.cpr.outputs.pull-request-url }}
+  pull-request-operation:
+    description: 'The pull request operation performed by the action: created, updated, closed or none'
+    value: ${{ steps.cpr.outputs.pull-request-operation }}
 runs:
   using: "composite"
   steps:
-    - uses: actions-rs/toolchain@v1
+    - name: Install rust toolchain
+      id: toolchain
+      uses: dtolnay/rust-toolchain@master
       with:
         toolchain: ${{ inputs.toolchain }}
         components: rustfmt, clippy
-    - uses: actions-rs/cargo@v1
+    - name: Cache build artifacts
+      uses: Swatinem/rust-cache@v2
+    - name: Apply clippy lints
+      shell: bash
+      env:
+        TOOLCHAIN: ${{ steps.toolchain.outputs.name }}
+      run: cargo "+$TOOLCHAIN" clippy --fix --allow-dirty
+    - name: Format code
+      shell: bash
+      env:
+        TOOLCHAIN: ${{ steps.toolchain.outputs.name }}
+      run: cargo "+$TOOLCHAIN" fmt
+    - name: Create pull request
+      id: cpr
+      uses: peter-evans/create-pull-request@v8
       with:
-        command: clippy
-        toolchain: ${{ inputs.toolchain }}
-        args: --fix
-    - uses: actions-rs/cargo@v1
-      with:
-        toolchain: ${{ inputs.toolchain }}
-        command: fmt
-    - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v4
-      with:
+        commit-message: ${{ inputs.commit-message }}
         title: ${{ inputs.commit-message }}
         delete-branch: true
         branch: clippy-lints
