@@ -20,6 +20,10 @@ autofix:
 
 The PR is created with the default `GITHUB_TOKEN`, so "Allow GitHub Actions to create and approve pull requests" has to be enabled in the repository settings under Actions > General.
 
+### PR summary
+
+The PR body lists the applied fixes per lint, with links to the clippy docs, and the warnings that are left for manual fixing. The same summary is shown in the job summary of the workflow run.
+
 ### Options
 
 | Option         | explanation                                      | default                             |
