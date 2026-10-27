@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/fxwiegand/apply-clippy-lints/compare/v1.1.0...v1.2.0) (2026-10-27)
+
+
+### Features
+
+* Summarize applied clippy fixes in the PR body and job summary ([b0f9cb0](https://github.com/fxwiegand/apply-clippy-lints/commit/b0f9cb03ca51f3c9d7286ec98a93f1849d543223))
+
 ## [1.1.0](https://github.com/fxwiegand/apply-clippy-lints/compare/v1.0.6...v1.1.0) (2026-10-27)
 
 
