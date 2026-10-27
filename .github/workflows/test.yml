@@ -1,0 +1,62 @@
+name: test
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: test-apply-clippy-lints
+  cancel-in-progress: false
+
+jobs:
+  test:
+    # Fork PRs only get a read-only token and cannot open PRs.
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+      - name: Create Rust project with fixable clippy lints
+        run: |
+          cat > Cargo.toml <<'EOF'
+          [package]
+          name = "fixture"
+          version = "0.1.0"
+          edition = "2021"
+          EOF
+          echo "/target" > .gitignore
+          mkdir -p src
+          cat > src/main.rs <<'EOF'
+          fn main() {
+              let v = vec![1, 2, 3];
+              if v.len() == 0 { println!("empty"); }
+          }
+          EOF
+      - name: Apply clippy lints
+        id: apply
+        uses: ./
+        with:
+          commit-message: "test: Apply clippy lints (run ${{ github.run_id }})"
+      - name: Check pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ steps.apply.outputs.pull-request-number }}
+          OPERATION: ${{ steps.apply.outputs.pull-request-operation }}
+        run: |
+          echo "Pull request #$PR was $OPERATION"
+          test -n "$PR"
+          gh pr view "$PR" --repo "$GITHUB_REPOSITORY" --json title,commits \
+            --jq '.title, .commits[].messageHeadline'
+          gh pr diff "$PR" --repo "$GITHUB_REPOSITORY" | grep 'is_empty()'
+      - name: Close test pull request
+        if: always() && steps.apply.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ steps.apply.outputs.pull-request-number }}
+        run: gh pr close "$PR" --repo "$GITHUB_REPOSITORY" --delete-branch --comment "Closed automatically by the test workflow."
